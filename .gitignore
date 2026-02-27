@@ -1,0 +1,11 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+
+mdu-global-horizon/node_modules/
+mdu-global-horizon/dist/
+
+.env
