@@ -140,7 +140,7 @@ Layihəni canlı serverə çıxarmazdan əvvəl `config/settings.py` faylında a
 ```python
 DEBUG = False
 SECRET_KEY = 'yeni-murakkab-tasadufi-acari-bura-yazin'
-ALLOWED_HOSTS = ['sizin-domain.az', 'server-ip-adresi']
+ALLOWED_HOSTS = ['domain.az', 'server-ip-adresi']
 ```
 
 ---
