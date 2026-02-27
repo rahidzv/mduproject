@@ -1,135 +1,173 @@
+# MDU Global Fair 2026
 
+**Django (Backend) + React (Frontend)** əsaslı layihənin **Docker** platforması üzərində qurulması və istismara verilməsi.
 
-Bu faylda layihenin (Django + React) Docker ile nec qurulub ishfe salinmasi addim-addim izah olunur.
+---
 
-## 1. Telebler
+## 1. Sistem Tələbləri
 
-Serverde / komputerinizde asagidakilar quraşdirilmiş olmalidir:
+Layihənin problemsiz çalışması üçün serverdə və ya lokal kompüterinizdə aşağıdakı proqram təminatları quraşdırılmış olmalıdır:
 
-- Docker (20+ versiyasi)
-- Docker Compose (docker compose emri ishlemelidir)
-- Git (reponu cekmek ucun)
+- **Docker** (20+ versiya tövsiyə olunur)
+- **Docker Compose** (`docker compose` əmrinin mövcud olması)
+- **Git** (repozitoriyanı kopyalamaq üçün)
 
-## 2. Layiheni yuklemek
+---
+
+## 2. Layihənin Yüklənməsi
+
+Repozitoriyanı Git vasitəsilə kopyalayın və layihənin kök qovluğuna daxil olun:
 
 ```bash
-git clone <sizin-repo-url>
+git clone https://github.com/rahidzv/mduproject.git
 cd UnipProject
 ```
 
-Bu qovluqda asagidakilar olacaq:
+### Qovluq Strukturu
 
-- `config/` — Django layihe fayllari
-- `api/` — API app (abune + elaqe endpointleri)
-- `mdu-global-horizon/` — React frontend (Vite + Tailwind)
-- `Dockerfile` — konteyner ucun resept
-- `docker-compose.yml` — butov sistemi bir emrle qaldirmaq ucun
-- `requirements.txt` — Python paket siyahisi
+| Qovluq / Fayl | Təsvir |
+|---|---|
+| `config/` | Django layihəsinin əsas konfiqurasiya faylları |
+| `api/` | API tətbiqi (abunəlik və əlaqə endpointləri) |
+| `mdu-global-horizon/` | React frontend (Vite + Tailwind) |
+| `Dockerfile` | Konteynerin qurulma (build) təlimatları |
+| `docker-compose.yml` | Bütün sistemi idarə edən orkestrasiya faylı |
+| `requirements.txt` | Python paketlərinin siyahısı |
 
-## 3. İlk defe image build etmek
+---
 
-Birinci defe ishledende image build olunmalidir. Bunun ucun root qovluqda (`UnipProject`) asagidaki emri icra et:
+## 3. İmajın Qurulması (Build)
+
+Sistemi ilk dəfə işə saldıqda və ya kodda əsaslı dəyişikliklər etdikdə Docker imajını yenidən qurmaq lazımdır. `UnipProject` qovluğunda aşağıdakı əmri icra edin:
 
 ```bash
 docker compose build
 ```
 
-Bu addimda:
+Bu mərhələdə avtomatik olaraq:
 
-1. Node image-inden istifade olunaraq `mdu-global-horizon` daxilinde:
-   - `npm install`
-   - `npm run build`
-   icra olunur ve `dist/` qovlugu yaranir.
-2. Python image-i yaradilir, `requirements.txt` faylindan butun Django/DRF paketleri qurasdirilir.
-3. React-in build neticesi (dist/) Django layihezine kocurulur.
+1. **Frontend build** — Node.js mühitində `npm install` və `npm run build` icra olunur, `dist/` qovluğu formalaşır.
+2. **Backend hazırlıq** — Python mühiti yaradılır, `requirements.txt` kitabxanaları quraşdırılır.
+3. **İnteqrasiya** — React-in statik faylları Django layihəsinin müvafiq qovluğuna köçürülür.
 
-## 4. Konteyneri ise salmaq
+---
 
-Build bitenden sonra proqrami ishfe salmaq ucun:
+## 4. Konteynerlərin İşə Salınması
+
+Build prosesi tamamlandıqdan sonra sistemi arxa planda işə salmaq üçün:
 
 ```bash
 docker compose up -d
 ```
 
-Bu emr:
+Konteyner daxilində avtomatik olaraq:
 
-- `web` adli servisi ayaqa qaldirir,
-- konteyner daxilinde avtomatik olaraq:
-  - `python manage.py migrate`
-  - `gunicorn config.wsgi:application --bind 0.0.0.0:8000`
-  icra edir.
+- Verilənlər bazasının miqrasiyaları (`python manage.py migrate`) yerinə yetirilir
+- `gunicorn` serveri vasitəsilə tətbiq `0.0.0.0:8000` ünvanında aktivləşir
 
-### Saytin acilmasi
+### Tətbiqə Giriş
 
-Brauzerde asagidaki unvana get:
+| Mühit | Ünvan |
+|---|---|
+| Lokal | `http://127.0.0.1:8000` |
+| Uzaq server | `http://<server-ip-adresi>:8000` |
 
-```text
-http://127.0.0.1:8000
-```
+---
 
-Server uzaq masindadirsa, `127.0.0.1` yerine serverin IP-sini ve ya domainini istifade et (meselen `http://sizin-domain.az:8000`).
+## 5. Konteynerlərin Dayandırılması
 
-## 5. Konteyneri dayandirmaq
-
-Isleyen konteynerleri dayandirmag ucun:
+İşləyən xidmətləri dayandırmaq və konteynerləri ləğv etmək üçün:
 
 ```bash
 docker compose down
 ```
 
-Bu emr konteynerleri dayandirir ve silir, amma image-lar saxlanilir. Növbəti defe `docker compose up -d` dedikde tez qaldirilacaq.
+> **Qeyd:** Bu əmrlə konteynerlər silinir, lakin qurulmuş imajlar yaddaşda qalır. Növbəti dəfə `docker compose up -d` əmri ilə sistem daha tez işə düşəcək.
 
-## 6. Loglara baxmaq
+---
 
-Backend-den gelen loglari gormek ucun:
+## 6. Jurnal (Log) Fayllarının İzlənməsi
+
+Sistemin daxili gedişatını və mümkün xətaları canlı izləmək üçün:
 
 ```bash
 docker compose logs -f
 ```
 
-`Ctrl + C` ile log izlemeni dayandira bilersen.
+İzləməni dayandırmaq üçün `Ctrl + C` düymə kombinasiyasından istifadə edin.
 
-## 7. Django idarfe emrlerini konteyner icinde ishletmek
+---
 
-Meselen, admin ucun superuser yaratmaq isteyirsen:
+## 7. Django İdarəetmə Əmrləri
+
+Django-nun idarəetmə əmrlərini konteyner daxilində icra etmək mümkündür.
+
+**Admin (superuser) yaratmaq:**
 
 ```bash
 docker compose exec web python manage.py createsuperuser
 ```
 
-Bashqa `manage.py` emrleri de eyni qaydada ishleyir:
+**Python shell mühitinə daxil olmaq:**
 
 ```bash
 docker compose exec web python manage.py shell
 ```
 
-## 8. Frontend-i yenileyende ne etmek lazimdir?
+---
 
-React (mdu-global-horizon) kodunda deyisiklik edende bu deyisikliklerin konteynerde gormek ucun:
+## 8. Frontend Yenilənmələri
 
-1. Kodu deyis (komputerinde)
-2. Yeniden build et ve konteyneri yenile:
+React kodunda dəyişiklik etdiyiniz təqdirdə imajı yenidən qurun və konteynerləri yeniləyin:
 
 ```bash
 docker compose build
 docker compose up -d
 ```
 
-Bu zaman:
-- yeni React build yaradilir,
-- yeni image qurlur,
-- konteyner yenilenmis kodla yeniden ishfe dushur.
+---
 
-## 9. Qeydler
+## 9. Vacib Təhlükəsizlik Qeydləri (Production)
 
-- `config/settings.py` icinde hal-hazirda `DEBUG = True` olaraq qalib. Real server ucun bunu `False` ele:
-  ```python
-  DEBUG = False
-  ```
-- `SECRET_KEY` deyishkenini qapali, tesadufi ve uzun bir setr ile deyishmek meslehetdir.
-- `ALLOWED_HOSTS` massivine oz domainini / IP-ni elave et:
-  ```python
-  ALLOWED_HOSTS = ['sizin-domain.az', 'server-ip-adresi']
-  ```
+Layihəni canlı serverə çıxarmazdan əvvəl `config/settings.py` faylında aşağıdakı tənzimləmələri mütləq nəzərdən keçirin:
 
-Bu fayldaki addimlari izlfmekle layiheyi Docker ile tek emrle (`docker compose up -d`) qaldira ve rahat sekilde idare ede bilersen.
+| Parametr | Dəyər | Açıqlama |
+|---|---|---|
+| `DEBUG` | `False` | İstehsal mühitində debug rejimi bağlanmalıdır |
+| `SECRET_KEY` | Unikal, təsadüfi sətir | Mövcud açarı mürəkkəb bir sətir ilə əvəzləyin |
+| `ALLOWED_HOSTS` | `['sizin-domain.az', 'server-ip']` | Serverinizin ünvanlarını əlavə edin |
+
+```python
+DEBUG = False
+SECRET_KEY = 'yeni-murakkab-tasadufi-acari-bura-yazin'
+ALLOWED_HOSTS = ['sizin-domain.az', 'server-ip-adresi']
+```
+
+---
+
+## API Endpointləri
+
+| Metod | Ünvan | Təsvir |
+|---|---|---|
+| `POST` | `/api/abune/` | Xəbərlər bülleteninə abunə olmaq |
+| `POST` | `/api/elaqe/` | Əlaqə formu vasitəsilə mesaj göndərmək |
+
+### Abunəlik Nümunəsi
+
+```bash
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"email": "test@example.com"}' \
+  http://127.0.0.1:8000/api/abune/
+```
+
+### Əlaqə Formu Nümunəsi
+
+```bash
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"ad": "Ad Soyad", "email": "test@example.com", "mesaj": "Salam, sualim var."}' \
+  http://127.0.0.1:8000/api/elaqe/
+```
+
+---
+
+© 2026 MDU Global Fair. Bütün hüquqlar qorunur.
