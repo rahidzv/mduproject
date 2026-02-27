@@ -1,4 +1,4 @@
-# MDU Global Fair 2026 — Docker ile Deploy Qaydasi
+
 
 Bu faylda layihenin (Django + React) Docker ile nec qurulub ishfe salinmasi addim-addim izah olunur.
 
@@ -17,7 +17,7 @@ git clone <sizin-repo-url>
 cd UnipProject
 ```
 
-Bu qovluqda asafidakilar olacaq:
+Bu qovluqda asagidakilar olacaq:
 
 - `config/` — Django layihe fayllari
 - `api/` — API app (abune + elaqe endpointleri)
@@ -43,7 +43,7 @@ Bu addimda:
 2. Python image-i yaradilir, `requirements.txt` faylindan butun Django/DRF paketleri qurasdirilir.
 3. React-in build neticesi (dist/) Django layihezine kocurulur.
 
-## 4. Konteyneri ishfe salmaq
+## 4. Konteyneri ise salmaq
 
 Build bitenden sonra proqrami ishfe salmaq ucun:
 
@@ -87,7 +87,7 @@ Backend-den gelen loglari gormek ucun:
 docker compose logs -f
 ```
 
-`Ctrl + C` ile log izlfmeni dayandira bilersen.
+`Ctrl + C` ile log izlemeni dayandira bilersen.
 
 ## 7. Django idarfe emrlerini konteyner icinde ishletmek
 
@@ -120,7 +120,7 @@ Bu zaman:
 - yeni image qurlur,
 - konteyner yenilenmis kodla yeniden ishfe dushur.
 
-## 9. Basic production qeydlferi
+## 9. Qeydler
 
 - `config/settings.py` icinde hal-hazirda `DEBUG = True` olaraq qalib. Real server ucun bunu `False` ele:
   ```python
@@ -132,4 +132,4 @@ Bu zaman:
   ALLOWED_HOSTS = ['sizin-domain.az', 'server-ip-adresi']
   ```
 
-Bu fayldaki addimlari izlfmekle layiheyi Docker ile tek emrle (`docker compose up -d`) qaldira ve rahat sekilde idarfe ede bilersen.
+Bu fayldaki addimlari izlfmekle layiheyi Docker ile tek emrle (`docker compose up -d`) qaldira ve rahat sekilde idare ede bilersen.
